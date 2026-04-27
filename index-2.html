@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BC Glâne – Badminton Club Glâne</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root {
+  --green: #2d5a27;
+  --green-light: #3d7a34;
+  --green-pale: #eef4ec;
+  --accent: #c8a84b;
+  --accent-pale: #fdf6e3;
+  --text: #1a1a18;
+  --muted: #6b6b60;
+  --border: #dcdcd0;
+  --bg: #f8f8f5;
+  --white: #ffffff;
+  --nav-w: 220px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+#sidebar {
+  width: var(--nav-w);
+  min-height: 100vh;
+  background: var(--green);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+}
+.sidebar-logo {
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.sidebar-logo .club-name {
+  font-family: 'Source Serif 4', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+}
+.sidebar-logo .club-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.sidebar-logo .shuttle-icon {
+  width: 72px;   /* 36px → 72px (x2) */
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  overflow: visible; /* 🔥 empêche la coupe */
+}
+
+.sidebar-logo .shuttle-icon img,
+.sidebar-logo .shuttle-icon svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* garde les proportions */
+}
+nav { flex: 1; padding: 16px 0; }
+nav ul { list-style: none; }
+nav > ul > li { position: relative; }
+nav > ul > li > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+nav > ul > li > a:hover, nav > ul > li > a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+nav > ul > li > a.active {
+  border-left: 3px solid var(--accent);
+  padding-left: 17px;
+}
+nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
+.nav-has-sub > a::after { content: '›'; margin-left: auto; font-size: 16px; opacity: 0.5; }
+.subnav { display: none; background: rgba(0,0,0,0.15); }
+.subnav.open { display: block; }
+.subnav a {
+  display: block;
+  padding: 8px 20px 8px 46px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s;
+  cursor: pointer;
+}
+.subnav a:hover { color: #fff; }
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+}
+
+/* MAIN */
+#main {
+  margin-left: var(--nav-w);
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* TOP BAR */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 400;
+}
+.topbar-badge {
+  font-size: 12px;
+  background: var(--green-pale);
+  color: var(--green);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 500;
+}
+
+/* PAGE SECTIONS */
+.page { display: none; padding: 40px 36px 60px; width: 100%; max-width: 100%; animation: fadeIn 0.2s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HERO */
+.hero-banner {
+  background: var(--green);
+  border-radius: 12px;
+  padding: 40px 40px;
+  margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: 60px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+}
+.hero-banner h1 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 12px;
+}
+.hero-banner p {
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  max-width: 480px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #2a1f00;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-outline {
+  display: inline-block;
+  background: transparent;
+  color: var(--green);
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1.5px solid var(--green);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-outline:hover { background: var(--green-pale); }
+
+/* CONTENT */
+.section-title {
+  font-family: 'Source Serif 4', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.section-lead {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.prose {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text);
+  max-width: 680px;
+}
+.prose p { margin-bottom: 16px; }
+.prose h2 { font-family: 'Source Serif 4', serif; font-size: 18px; font-weight: 400; margin: 28px 0 10px; color: var(--green); }
+
+/* CARDS GRID */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+.card-value { font-family: 'Source Serif 4', serif; font-size: 26px; font-weight: 300; color: var(--green); }
+.card-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--white); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.data-table thead th { background: var(--green); color: #fff; padding: 12px 16px; text-align: left; font-weight: 500; font-size: 13px; }
+.data-table tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: var(--green-pale); }
+.badge { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 100px; font-weight: 500; }
+.badge-green { background: var(--green-pale); color: var(--green); }
+.badge-gold { background: var(--accent-pale); color: #7a5c0a; }
+.badge-muted { background: #f0f0ea; color: var(--muted); }
+
+/* HORAIRE BLOCK */
+.horaire-block { background: var(--white); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+.horaire-day { background: var(--green-pale); padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--green); border-bottom: 1px solid var(--border); }
+.horaire-row { display: flex; align-items: center; gap: 16px; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+.horaire-row:last-child { border-bottom: none; }
+.horaire-time { font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 300; color: var(--text); min-width: 130px; }
+.horaire-info { flex: 1; }
+.horaire-info strong { font-size: 14px; font-weight: 500; display: block; }
+.horaire-info span { font-size: 13px; color: var(--muted); }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 580px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-group label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.form-group input, .form-group select, .form-group textarea {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--white);
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--green-light);
+}
+
+/* TARIF */
+.tarif-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; max-width: 480px; }
+.tarif-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.tarif-row:last-child { border-bottom: none; }
+.tarif-label { font-size: 14px; color: var(--text); }
+.tarif-price { font-family: 'Source Serif 4', serif; font-size: 18px; font-weight: 300; color: var(--green); }
+
+/* INFO BOX */
+.info-box { background: var(--green-pale); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 24px; font-size: 14px; line-height: 1.65; color: var(--text); }
+.info-box strong { color: var(--green); }
+
+/* COMITE */
+.comite-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.comite-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+.comite-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--green-pale); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 15px; font-weight: 500; color: var(--green); }
+.comite-name { font-size: 14px; font-weight: 500; }
+.comite-role { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+/* FOOTER */
+.main-footer { margin-top: auto; padding: 20px 36px; border-top: 1px solid var(--border); background: var(--white); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+
+/* MOBILE HAMBURGER */
+.hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+@media (max-width: 768px) {
+  :root { --nav-w: 0px; }
+  #sidebar { transform: translateX(-220px); transition: transform 0.25s; width: 220px; }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; }
+  .hamburger { display: flex; }
+  .page { padding: 24px 20px 48px; }
+  .hero-banner { padding: 28px 24px; }
+  .hero-banner h1 { font-size: 24px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .topbar { padding: 12px 20px; }
+}
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="shuttle-icon">
+     <img class="shuttle-icon" src="logo_bcg.png" alt="logo du club">
+    </div>
+    <div class="club-name">BC Glâne</div>
+    <div class="club-sub">Badminton Club Glâne</div>
+  </div>
+  <nav>
+    <ul>
+      <li class="nav-has-sub">
+        <a onclick="toggleSub('sub-bienvenue',this)">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.2754 0.944403C11.3453 0.744005 10.2222 0.970412 9.13178 2.0608C8.33219 2.86038 7.9983 3.67642 7.95466 4.41945C7.21168 4.46315 6.39574 4.79705 5.59623 5.59656C4.7968 6.39598 4.46289 7.21185 4.41914 7.95476C3.67615 7.99845 2.86019 8.33235 2.06067 9.13187C0.970292 10.2223 0.743884 11.3454 0.94428 12.2755C1.21143 13.5155 2.36155 14.0955 2.99091 14.3815L13.0368 18.9479C13.7958 19.2928 14.6891 19.1308 15.2786 18.5413L18.5412 15.2788C19.1307 14.6892 19.2927 13.7959 18.9478 13.0369L14.3815 2.99103C14.0954 2.36167 13.5154 1.21155 12.2754 0.944403ZM11.3631 2.92663C11.5577 2.86548 11.7198 2.87057 11.8542 2.89954C11.9267 2.91516 12.0234 2.96174 12.154 3.11733C12.2925 3.28248 12.4237 3.51715 12.5607 3.81864L17.127 13.8645L17.0038 13.9877L10.2365 5.28681C10.1076 5.15387 10.0151 4.97688 9.97358 4.79696C9.92398 4.58201 9.88826 4.13274 10.546 3.47501C10.8869 3.13412 11.1654 2.98872 11.3631 2.92663ZM5.2867 10.2368L13.9875 17.0041L13.8644 17.1271L3.81852 12.5608C3.51702 12.4238 3.28236 12.2926 3.11721 12.1541C2.96162 12.0235 2.91504 11.9268 2.89942 11.8543C2.87045 11.7198 2.86535 11.5578 2.92651 11.3632C2.9886 11.1655 3.134 10.887 3.47489 10.5461C4.13262 9.88835 4.58189 9.92407 4.79683 9.97368C4.97795 10.0155 5.15478 10.1048 5.2867 10.2368ZM15.413 15.5788L6.6399 8.75532C6.58371 8.68236 6.4812 8.51974 6.43804 8.33271C6.38844 8.11777 6.35271 7.6685 7.01045 7.01077C7.66818 6.35304 8.11744 6.38876 8.33238 6.43837C8.51988 6.48163 8.68289 6.58461 8.75554 6.64065L15.5786 15.4132L15.413 15.5788Z" fill="#ffffff8c"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M15.7878 19.4464C15.2924 19.9419 15.1623 20.7967 15.6981 21.4206C16.0694 21.853 16.8569 22.653 17.9452 23.0047C18.5098 23.1873 19.1614 23.2505 19.8583 23.0724C20.5523 22.8951 21.2237 22.4958 21.8597 21.8598C22.4957 21.2238 22.895 20.5523 23.0724 19.8583C23.2504 19.1614 23.1872 18.5099 23.0047 17.9452C22.6529 16.857 21.8529 16.0694 21.4206 15.6982C20.7966 15.1624 19.9418 15.2924 19.4464 15.7879L15.7878 19.4464ZM18.5603 21.1017C18.1893 20.9818 17.848 20.7386 17.5743 20.4883L20.4882 17.5744C20.7385 17.8481 20.9817 18.1894 21.1016 18.5603C21.1853 18.8192 21.2062 19.0832 21.1346 19.3632C21.0623 19.6461 20.8783 20.0128 20.4455 20.4456C20.0127 20.8784 19.646 21.0624 19.3631 21.1347C19.0832 21.2062 18.8192 21.1854 18.5603 21.1017Z" fill="#ffffff8c"></path> </g></svg>
+          Bienvenue
+        </a>
+        <div class="subnav" id="sub-bienvenue">
+          <a onclick="showPage('bienvenue',this)">Accueil</a>
+          <a onclick="showPage('actualites',this)">Actualités</a>
+        </div>
+      </li>
+      <li class="nav-has-sub">
+        <a onclick="toggleSub('sub-club',this)">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          Le club
+        </a>
+        <div class="subnav" id="sub-club">
+          <a onclick="showPage('historique',this)">Historique</a>
+          <a onclick="showPage('comite',this)">Le comité</a>
+        </div>
+      </li>
+      <li><a onclick="showPage('openglane',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="8" r="6"/>
+          <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+        </svg>
+        Open Glâne
+      </a></li>
+      <li><a onclick="showPage('entrainement',this)">
+        <svg class="nav-icon" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#ffffff8c" stroke="#ffffff8c"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css"> .st0{fill:#ffffff8c;} </style> <g> <polygon class="st0" points="138.428,358.367 113.502,363.804 27.327,449.986 62.022,484.677 148.196,398.503 153.636,373.579 216.741,310.467 201.533,295.263 "></polygon> <rect x="-1.699" y="469.646" transform="matrix(-0.7072 -0.707 0.707 -0.7072 -286.7766 842.932)" class="st0" width="65.712" height="22.405"></rect> <path class="st0" d="M465.73,123.257l-35.291,35.291l-36.085-36.086l48.041-48.04c-0.775-0.834-1.527-1.675-2.337-2.484 c-1.336-1.34-2.726-2.625-4.14-3.872l-47.979,47.979l-36.085-36.086l34.107-34.106c-3.872-0.538-7.816-0.865-11.827-1.005 l-28.698,28.694l-20.768-20.772c-3.108,1.09-6.184,2.297-9.237,3.598l23.596,23.592l-40.1,40.096l-31.98-31.98 c-1.651,1.534-3.291,3.1-4.899,4.712c-0.538,0.53-1.055,1.091-1.589,1.636l32.054,32.051l-40.092,40.088l-24.098-24.098 c-1.277,3.116-2.407,6.262-3.408,9.424l21.092,21.092l-25.785,25.782c0.432,3.691,1.052,7.344,1.873,10.958l30.326-30.33 l36.089,36.086l-41.6,41.607c1.258,1.386,2.563,2.757,3.91,4.104c0.802,0.802,1.628,1.581,2.45,2.36l41.654-41.654l36.082,36.086 l-31.319,31.318c2.781,0.701,5.588,1.309,8.432,1.784c0.755,0.132,1.515,0.226,2.278,0.335l27.023-27.019l22.688,22.681 c3.162-0.989,6.309-2.118,9.44-3.388l-25.711-25.71l40.093-40.088l33.644,33.64c0.549-0.522,1.102-1.028,1.639-1.566 c1.616-1.621,3.17-3.256,4.709-4.915l-33.578-33.577l40.096-40.096l25.17,25.165c1.297-3.053,2.488-6.13,3.587-9.245 l-22.338-22.338l30.182-30.182C466.801,130.874,466.361,127.027,465.73,123.257z M345.437,86.37l36.089,36.092l-40.096,40.097 l-36.089-36.085L345.437,86.37z M258.835,172.98l40.092-40.096l36.085,36.093l-40.089,40.088L258.835,172.98z M337.419,251.568 l-36.082-36.092l40.093-40.089l36.081,36.085L337.419,251.568z M383.929,205.054l-36.085-36.077l40.096-40.104l36.085,36.085 L383.929,205.054z"></path> <path class="st0" d="M504.931,93.979c-6.406-20.103-17.318-38.702-32.767-54.147c-15.438-15.438-34.037-26.349-54.144-32.759 c-30.189-9.628-63.684-9.261-96.252,0.093c-32.581,9.362-64.339,27.751-91.23,54.63c-17.914,17.922-31.521,37.487-40.828,57.769 c-13.973,30.414-18.241,62.48-13.167,92.647c5.047,30.181,19.468,58.399,42.168,81.08c15.122,15.118,32.701,26.591,51.682,34.037 c28.48,11.184,60.094,13.28,91.21,5.717c31.135-7.547,61.729-24.706,88.6-51.585c35.828-35.851,56.604-80.341,60.954-123.95 C513.319,135.711,511.349,114.097,504.931,93.979z M477.277,182.319c-7.968,27.751-23.842,55.362-47.356,78.861 c-15.674,15.686-32.428,27.238-49.442,35.05c-25.532,11.706-51.628,15.032-75.944,10.951 c-24.324-4.097-46.931-15.577-65.546-34.161c-12.4-12.408-21.622-26.606-27.619-41.88c-8.98-22.922-10.756-48.328-4.545-73.984 c6.223-25.633,20.484-51.554,43.991-75.084c31.334-31.35,69.993-49.084,106.507-52.691c18.248-1.807,35.933-0.116,51.978,5.008 c16.064,5.14,30.501,13.646,42.588,25.718c12.084,12.096,20.589,26.536,25.722,42.596 C485.303,126.754,485.257,154.552,477.277,182.319z"></path> </g> </g></svg>
+        Entraînements
+      </a></li>
+      <li class="nav-has-sub">
+        <a onclick="toggleSub('sub-compet',this)">
+         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff8c"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 15C8.68629 15 6 12.3137 6 9V3.44444C6 3.0306 6 2.82367 6.06031 2.65798C6.16141 2.38021 6.38021 2.16141 6.65798 2.06031C6.82367 2 7.0306 2 7.44444 2H16.5556C16.9694 2 17.1763 2 17.342 2.06031C17.6198 2.16141 17.8386 2.38021 17.9397 2.65798C18 2.82367 18 3.0306 18 3.44444V9C18 12.3137 15.3137 15 12 15ZM12 15V18M18 4H20.5C20.9659 4 21.1989 4 21.3827 4.07612C21.6277 4.17761 21.8224 4.37229 21.9239 4.61732C22 4.80109 22 5.03406 22 5.5V6C22 6.92997 22 7.39496 21.8978 7.77646C21.6204 8.81173 20.8117 9.62038 19.7765 9.89778C19.395 10 18.93 10 18 10M6 4H3.5C3.03406 4 2.80109 4 2.61732 4.07612C2.37229 4.17761 2.17761 4.37229 2.07612 4.61732C2 4.80109 2 5.03406 2 5.5V6C2 6.92997 2 7.39496 2.10222 7.77646C2.37962 8.81173 3.18827 9.62038 4.22354 9.89778C4.60504 10 5.07003 10 6 10M7.44444 22H16.5556C16.801 22 17 21.801 17 21.5556C17 19.5919 15.4081 18 13.4444 18H10.5556C8.59188 18 7 19.5919 7 21.5556C7 21.801 7.19898 22 7.44444 22Z" stroke="#ffffff8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+          Interclubs
+        </a>
+        <div class="subnav" id="sub-compet">
+          <a onclick="showPage('interclubs',this)">Équipes 2025-26</a>
+          <a onclick="showPage('classements',this)">Saisons précédentes</a>
+        </div>
+      </li>
+      <li><a onclick="showPage('juniors',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Juniors
+      </a></li>
+      <li><a onclick="showPage('photos',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Photos / Vidéos
+      </a></li>
+      <li class="nav-has-sub">
+        <a onclick="toggleSub('sub-inscription',this)">
+         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 4H7.2C6.0799 4 5.51984 4 5.09202 4.21799C4.71569 4.40974 4.40973 4.7157 4.21799 5.09202C4 5.51985 4 6.0799 4 7.2V16.8C4 17.9201 4 18.4802 4.21799 18.908C4.40973 19.2843 4.71569 19.5903 5.09202 19.782C5.51984 20 6.0799 20 7.2 20H16.8C17.9201 20 18.4802 20 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V12.5M15.5 5.5L18.3284 8.32843M10.7627 10.2373L17.411 3.58902C18.192 2.80797 19.4584 2.80797 20.2394 3.58902C21.0205 4.37007 21.0205 5.6364 20.2394 6.41745L13.3774 13.2794C12.6158 14.0411 12.235 14.4219 11.8012 14.7247C11.4162 14.9936 11.0009 15.2162 10.564 15.3882C10.0717 15.582 9.54378 15.6885 8.48793 15.9016L8 16L8.04745 15.6678C8.21536 14.4925 8.29932 13.9048 8.49029 13.3561C8.65975 12.8692 8.89125 12.4063 9.17906 11.9786C9.50341 11.4966 9.92319 11.0768 10.7627 10.2373Z" stroke="#ffffff8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+          Inscription
+        </a>
+        <div class="subnav" id="sub-inscription">
+          <a onclick="showPage('contact',this)">Contact</a>
+          <a onclick="showPage('tarif',this)">Tarifs</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <div class="sidebar-footer">© 2025 BC Glâne · Romont FR</div>
+</aside>
+
+<div id="main">
+  <header class="topbar">
+    <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span class="topbar-title" id="topbar-title">Bienvenue</span>
+    <span class="topbar-badge">Saison 2025–2026</span>
+  </header>
+
+  <!-- BIENVENUE -->
+  <div class="page active" id="page-bienvenue">
+    <div class="hero-banner">
+      <h1>Bienvenue sur le site<br>du BC Glâne 🏸</h1>
+      <button class="btn-primary" onclick="showPage('contact',null)">Nous rejoindre</button>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-label">Fondé en</div>
+        <div class="card-value">2006</div>
+        <div class="card-desc">10 mars 2006, Romont</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Membres</div>
+        <div class="card-value">~70</div>
+        <div class="card-desc">+ 40 juniors</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Équipes adultes</div>
+        <div class="card-value">4</div>
+        <div class="card-desc">2e, 3e et 4e ligues</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Lieu</div>
+        <div class="card-value">Bicubic</div>
+        <div class="card-desc">Romont, Fribourg</div>
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>Championnats fribourgeois 2026</strong> Le BC Glâne organisera conjointement avec le BC Corminboeuf les championnats fribourgeois 2026 du <strong>30 octobre au 1er novembre au Bicubic</strong>.
+      <a href="https://sb.tournamentsoftware.com/sport/tournament?id=4F95D606-A2F3-43CC-9A22-DB82450789D0" target="_blank"
+        style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:var(--green);color:#fff;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:500;text-decoration:none;transition:opacity 0.15s;"
+        onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        S'inscrire sur SwissBadminton
+      </a>
+    </div>
+  </div>
+
+  <!-- HISTORIQUE -->
+  <div class="page" id="page-historique">
+    <h2 class="section-title">Historique du club</h2>
+    <p class="section-lead">La belle aventure du Badminton Club Glâne depuis sa fondation en 2006.</p>
+    <div class="prose">
+      <p>Jouer au badminton chaque semaine dans un club officiel en Glâne ? Quelle belle idée ! C'était pourtant chose encore impossible avant le 10 mars 2006, date de la fondation du Badminton Club Glâne. Avant d'en arriver à ce jour faste, il aura tout de même fallu se ronger quelques centimètres d'ongles et trouver des personnes enclines à pratiquer le badminton comme vrai sport hebdomadaire.</p>
+      <p>Cette idée de création de club avait déjà germé dans les têtes du comité fondateur — Steve Cornu, Mario Sulmoni, Annick Bugnon et Lucas Bossel — lors de leur passage au cycle d'orientation de Romont. Ces quatre amis, fans de sports de raquette, ont alors vite compris que ce sport allait faire partie de leur quotidien.</p>
+      <p>C'est Lucas Bossel, actuel président historique, qui a saisi cette chance en 2005 dans le cadre de son travail de maturité, pour finalement concrétiser son projet le 10 mars 2006. Douze membres, une adhésion immédiate à l'Association Fribourgeoise de Badminton et une participation au championnat pour non licenciés — voilà ce qui était au programme de la première saison du BCG.</p>
+      <p>Depuis, de nouveaux mordus de la plume et du bouchon sont venus étoffer le club, qui compte désormais une septantaine de membres ainsi qu'une quarantaine de juniors. Le BC Glâne est aujourd'hui composé d'une équipe en 2e ligue, de deux en 3e ligue et de trois en 4e ligue, qui s'entraînent au Bicubic à Romont.</p>
+      <p><em>— Lucas Bossel, président fondateur</em></p>
+    </div>
+  </div>
+
+  <!-- COMITÉ -->
+  <div class="page" id="page-comite">
+    <h2 class="section-title">Le comité</h2>
+    <div class="comite-grid">
+      <div class="comite-card">
+        <div class="comite-avatar">JY</div>
+        <div class="comite-name">Jean-Yves Salomone</div>
+        <div class="comite-role">Président</div>
+      </div>
+      <div class="comite-card">
+        <div class="comite-avatar">AN</div>
+        <div class="comite-name">Anaïs Noser</div>
+        <div class="comite-role">Responsable Junior</div>
+      </div>
+      <div class="comite-card">
+        <div class="comite-avatar">FR</div>
+        <div class="comite-name">Frédéric Rolle</div>
+        <div class="comite-role">Responsable technique</div>
+      </div>
+      <div class="comite-card">
+        <div class="comite-avatar">DB</div>
+        <div class="comite-name">Daniel Bühler</div>
+        <div class="comite-role">Caissier</div>
+      </div>
+      <div class="comite-card">
+        <div class="comite-avatar">CS</div>
+        <div class="comite-name">Charline Schürr</div>
+        <div class="comite-role">Secrétaire</div>
+      </div>
+      <div class="comite-card">
+        <div class="comite-avatar">MS</div>
+        <div class="comite-name">Maxime Strüby</div>
+        <div class="comite-role">Responsable événements</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:20px;">Pour contacter le comité, utilisez la page <a href="#" onclick="showPage('contact',null)" style="color:var(--green)">Contact</a>.</p>
+  </div>
+
+  <!-- ACTUALITÉS -->
+  <div class="page" id="page-actualites">
+    <h2 class="section-title">Actualités</h2>
+    <p class="section-lead">Les dernières nouvelles du BC Glâne.</p>
+    <div class="info-box">
+      <strong>Open Glâne 2027 :</strong> Le tournoi Open Glâne reviendra en 2027. Consultez la page dédiée pour les détails et inscriptions.
+    </div>
+    <div class="info-box" style="border-left-color:var(--accent);background:var(--accent-pale);">
+      <strong>Fin de saison 2025-26:</strong> Toutes nos équipes ont réussi de jolis résultats et se sont maintenues dans leur ligue respective. Bravo à tous les joueurs!
+    </div>
+    <div class="info-box">
+      <strong>Info pour les joueurs débutants/loisir :</strong> Vous pouvez maintenant participer à l'entraînement adulte du lundi (tout niveau) et venir jouer en jeu libre le mercredi soir. N'hésitez pas à rejoindre le club !
+    </div>
+  </div>
+
+  <!-- ENTRAÎNEMENT -->
+  <div class="page" id="page-entrainement">
+    <h2 class="section-title">Entraînement</h2>
+    <p class="section-lead">Horaires des séances au Bicubic, Romont.</p>
+    <div class="info-box">
+      <strong>Débutants et joueurs loisir bienvenus !</strong> Participez à l'entraînement du lundi (tout niveau) ou venez jouer en jeu libre le mercredi soir.
+    </div>
+    <div class="horaire-block">
+      <div class="horaire-day">Lundi</div>
+      <div class="horaire-row">
+        <div class="horaire-time">19h00 – 20h30</div>
+        <div class="horaire-info">
+          <strong>Entraînement adulte et junior avancé</strong>
+          <span>Entraîneur: Robin Barras</span>
+        </div>
+        <span class="badge badge-green">Adulte</span>
+      </div>
+    </div>
+    <div class="horaire-block">
+      <div class="horaire-day">Mercredi</div>
+      <div class="horaire-row">
+        <div class="horaire-time">18h – 19h30</div>
+        <div class="horaire-info">
+          <strong>Entraînement 13-17 ans</strong>
+          <span>Entraîneur: Lucile Rotzetter</span>
+        </div>
+        <span class="badge badge-gold">Junior</span>
+      </div>
+    </div>
+    <div class="horaire-block">
+      <div class="horaire-day">Mercredi</div>
+      <div class="horaire-row">
+        <div class="horaire-time">19h30 – 21h00</div>
+        <div class="horaire-info">
+          <strong>Entraînement adulte et junior avancé</strong>
+          <span>Entraîneur: David Lim</span>
+          <span>Échauffement 19h30 · Jeu libre possible jusqu'à 22h</span>
+        </div>
+        <span class="badge badge-green">Adultes</span>
+      </div>
+    </div>
+    <div class="horaire-block">
+      <div class="horaire-day">Mercredi</div>
+      <div class="horaire-row">
+        <div class="horaire-time">19h30 – 22h00</div>
+        <div class="horaire-info">
+          <strong>Jeu libre</strong>
+          <span>2 terrains sont disponibles en parallèle dans l'entraînement pour du jeu libre</span>
+        </div>
+        <span class="badge badge-green">Tout niveau</span>
+      </div>
+    </div>
+    <div class="horaire-block">
+      <div class="horaire-day">Jeudi</div>
+      <div class="horaire-row">
+        <div class="horaire-time">18h – 19h30</div>
+        <div class="horaire-info">
+          <strong>Entraînement 8-12 ans</strong>
+          <span>Entraîneur: Annie Python, Anaïs Noser ou Alessia Forêt</span>
+        </div>
+        <span class="badge badge-gold">Juniors</span>
+      </div>
+    </div>      
+    <p style="font-size:13px;color:var(--muted);margin-top:20px;">Les entraînements sont tous donné au Bicubic à Romont. Ils ont lieu dans les salles de sport 1 et 2.</p>
+  </div>
+
+<!-- Saison en cours -->
+<div class="page" id="page-interclubs">
+  <h2 class="section-title">Interclubs</h2>
+  <p class="section-lead">Le BC Glâne engage plusieurs équipes dans le championnat fribourgeois. Vous pouvez avoir accès au classement de chacune d'entre elles via les liens ci-dessous.</p>
+
+  <style>
+    .team-row { cursor: pointer; user-select: none; transition: background 0.15s; }
+    .team-row:hover { background: var(--green-pale); }
+    .team-row td:first-child::before { content: '›'; display: inline-block; margin-right: 8px; transition: transform 0.2s; color: var(--green); font-size: 16px; }
+    .team-row.open td:first-child::before { transform: rotate(90deg); }
+    .team-link { font-size: 12px; color: var(--green); text-decoration: none; border: 1px solid var(--green); border-radius: 100px; padding: 3px 10px; margin-left: 8px; white-space: nowrap; }
+    .team-link:hover { background: var(--green); color: #fff; }
+    .players-row { display: none; background: var(--green-pale); }
+    .players-row.open { display: table-row; }
+    .players-row td { padding: 10px 20px 14px 32px !important; }
+    .players-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .players-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+    .player-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--white); border: 1px solid var(--border); border-radius: 100px; padding: 4px 12px; font-size: 13px; color: var(--text); }
+    .player-chip.captain { background: var(--accent-pale); border-color: var(--accent); font-weight: 500; }
+    .captain-badge { font-size: 10px; background: var(--accent); color: #2a1f00; border-radius: 100px; padding: 1px 7px; font-weight: 600; letter-spacing: 0.03em; }
+  </style>
+
+  <table class="data-table">
+    <thead><tr><th>Équipe</th><th>Ligue</th></tr></thead>
+    <tbody>
+
+      <!-- BCG 1 -->
+      <tr class="team-row" onclick="toggleTeam('bcg1', this)">
+        <td>BCG 1 <a class="team-link" href="https://sb.tournamentsoftware.com/league/6930DE56-9B21-41BF-B2CF-B492533E7613/draw/10" target="_blank" onclick="event.stopPropagation()">Classement ↗</a></td>
+        <td>2e ligue</td>
+      </tr>
+      <tr class="players-row" id="bcg1">
+        <td colspan="2">
+          <div class="players-label">Joueurs</div>
+          <div class="players-list">
+            <span class="player-chip captain">Charline Schurr <span class="captain-badge">Capitaine</span></span>
+            <span class="player-chip">Anaïs Noser</span>
+            <span class="player-chip">Jérémy Pantone</span>
+            <span class="player-chip">Sacha Yersin</span> 
+            <span class="player-chip">Maxime Morel</span>
+          </div>
+        </td>
+      </tr>
+
+      <!-- BCG 2 -->
+      <tr class="team-row" onclick="toggleTeam('bcg2', this)">
+        <td>BCG 2 <a class="team-link" href="https://sb.tournamentsoftware.com/league/6930DE56-9B21-41BF-B2CF-B492533E7613/draw/46" target="_blank" onclick="event.stopPropagation()">Classement ↗</a></td>
+        <td>3e ligue</td>
+      </tr>
+      <tr class="players-row" id="bcg2">
+        <td colspan="2">
+          <div class="players-label">Joueurs</div>
+          <div class="players-list">
+            <span class="player-chip captain">Jean-Yves Salomone <span class="captain-badge">Capitaine</span></span>
+            <span class="player-chip">Jane Simonin</span>
+            <span class="player-chip">Céline Davet</span>
+            <span class="player-chip">Annick Bugnon</span>
+            <span class="player-chip">Christian Pauli</span>
+            <span class="player-chip">Lucas Bossel</span>
+            <span class="player-chip">Mario Sulmoni</span>
+            <span class="player-chip">Michael Besson</span>
+            <span class="player-chip">Nicolas Etter</span>
+          </div>
+        </td>
+      </tr>
+
+      <!-- BCG 3 -->
+      <tr class="team-row" onclick="toggleTeam('bcg3', this)">
+        <td>BCG 3 <a class="team-link" href="https://sb.tournamentsoftware.com/league/6930DE56-9B21-41BF-B2CF-B492533E7613/draw/45" target="_blank" onclick="event.stopPropagation()">Classement ↗</a></td>
+        <td>3e ligue</td>
+      </tr>
+      <tr class="players-row" id="bcg3">
+        <td colspan="2">
+          <div class="players-label">Joueurs</div>
+          <div class="players-list">
+            <span class="player-chip captain">Gilbert Rotzetter <span class="captain-badge">Capitaine</span></span>
+            <span class="player-chip">Annie Python</span>
+            <span class="player-chip">Elise Frey</span>
+            <span class="player-chip">Delphine Richoz</span>
+            <span class="player-chip">Christian Simonin</span>
+            <span class="player-chip">Albert Meyling</span>
+            <span class="player-chip">Jérôme Doy</span>
+            <span class="player-chip">Pierre-André Rouiller</span>
+          </div>
+        </td>
+      </tr>
+
+      <!-- BCG 4 -->
+      <tr class="team-row" onclick="toggleTeam('bcg4', this)">
+        <td>BCG 4 <a class="team-link" href="https://sb.tournamentsoftware.com/league/6930DE56-9B21-41BF-B2CF-B492533E7613/draw/42" target="_blank" onclick="event.stopPropagation()">Classement ↗</a></td>
+        <td>4e ligue</td>
+      </tr>
+      <tr class="players-row" id="bcg4">
+        <td colspan="2">
+          <div class="players-label">Joueurs</div>
+          <div class="players-list">
+            <span class="player-chip captain">Maxime Strüby<span class="captain-badge">Capitaine</span></span>
+            <span class="player-chip">Alessia Foret</span>
+            <span class="player-chip">Valentine Ruffieux</span>
+            <span class="player-chip">Romain Pauli</span>
+            <span class="player-chip">Axel Mauron</span>
+            <span class="player-chip">Loki Zhenlong Wu</span>
+            <span class="player-chip">Daniel Bühler</span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;color:var(--muted);margin-top:16px;">Pour voir les prochains matchs et d'autres détails, consultez le site de <a href="https://sb.tournamentsoftware.com/league/6930DE56-9B21-41BF-B2CF-B492533E7613/club/219" target="_blank" style="color:var(--green)">Swiss Badminton</a>.</p>
+
+</div>
+
+<!-- Saisons précédentes -->
+<div class="page" id="page-classements">
+  <h2 class="section-title">Anciens résultats</h2>
+  <p class="section-lead">Retrouvez les classements des équipes du BC Glâne pour les saisons passées.</p>
+
+  <div style="display:flex; flex-direction:column; gap:12px; max-width:560px; margin-top:8px;">
+
+    <a href="https://sb.tournamentsoftware.com/league/4D2A187C-0855-4B4F-B106-6B6413FC17BF/club/219" target="_blank" class="season-card">
+      <div class="season-card-inner">
+        <div class="season-year">2024 – 25</div>
+        <div class="season-label">Voir les résultats</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+
+    <a href="https://sb.tournamentsoftware.com/league/997197CF-B35F-40FC-983A-0E8FD2D5DC8E/club/219" target="_blank" class="season-card">
+      <div class="season-card-inner">
+        <div class="season-year">2023 – 24</div>
+        <div class="season-label">Voir les résultats</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+
+    <a href="https://sb.tournamentsoftware.com/league/13DE9FC8-55F1-415F-93BC-765242C1D41A/club/219" target="_blank" class="season-card">
+      <div class="season-card-inner">
+        <div class="season-year">2022 – 23</div>
+        <div class="season-label">Voir les résultats</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+
+    <a href="https://sb.tournamentsoftware.com/league/05EDB7B3-199D-4C4D-B1C8-85D228FEBA71/club/219" target="_blank" class="season-card">
+      <div class="season-card-inner">
+        <div class="season-year">2021 – 22</div>
+        <div class="season-label">Voir les résultats</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+
+    <a href="https://sb.tournamentsoftware.com/league/81720FDA-CF90-441B-88A2-0603AFBE3C1E/club/219" target="_blank" class="season-card">
+      <div class="season-card-inner">
+        <div class="season-year">2020 – 21</div>
+        <div class="season-label">Voir les résultats</div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+
+  </div>
+
+  <div class="info-box" style="margin-top:24px;">
+    Pour les saisons plus anciennes, référez-vous directement au site <a href="https://sb.tournamentsoftware.com/leagues" target="_blank" style="color:var(--green)">Swiss Badminton</a>.
+  </div>
+
+  <style>
+    .season-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+      text-decoration: none; color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    }
+    .season-card:hover {
+      border-color: var(--green); box-shadow: 0 2px 12px rgba(45,90,39,0.1);
+      transform: translateX(3px); color: var(--green);
+    }
+    .season-card:hover svg { stroke: var(--green); }
+    .season-card svg { color: var(--muted); flex-shrink: 0; transition: stroke 0.15s; }
+    .season-card-inner { display: flex; align-items: baseline; gap: 14px; }
+    .season-year { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 300; color: inherit; }
+    .season-label { font-size: 13px; color: var(--muted); }
+    .season-card:hover .season-label { color: var(--green-light); }
+  </style>
+</div>
+
+  <!-- TARIF -->
+  <div class="page" id="page-tarif">
+    <h2 class="section-title">Tarifs</h2>
+    <p class="section-lead">La cotisation au club permet aux membres d'avoir accès aux entraînements avec entraîneurs et volants à plumes fournis, aux soirées jeu libre, au camp du club, au tournoi interne, au souper annuel, aux différentes sorties ainsi qu'à l'assemblée générale (pour les plus de 16 ans).</p>
+
+    <!-- Tableau des cotisations -->
+    <table class="data-table" style="margin-bottom:28px;">
+      <thead>
+        <tr>
+          <th>Catégorie</th>
+          <th>Cotisation club</th>
+          <th>Licence Swiss Badminton</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Membres adultes (dès 2005)</td>
+          <td>CHF 200.–</td>
+          <td style="color:var(--muted)">—</td>
+          <td style="font-weight:600;font-family:'DM Sans',sans-serif;">CHF 200.–</td>
+        </tr>
+        <tr>
+          <td>Membres adultes avec licence (dès 2005)</td>
+          <td>CHF 200.–</td>
+          <td>CHF 120.–</td>
+          <td style="font-weight:600;font-family:'DM Sans',sans-serif;">CHF 320.–</td>
+        </tr>
+        <tr>
+          <td>Juniors U19 (nés 2007 à 2004)</td>
+          <td>CHF 150.–</td>
+          <td>CHF 40.–</td>
+          <td style="font-weight:600;font-family:'DM Sans',sans-serif;">CHF 190.–</td>
+        </tr>
+        <tr>
+          <td>Juniors U17 (nés 2017 à 2010)</td>
+          <td>CHF 150.–</td>
+          <td>CHF 20.–</td>
+          <td style="font-weight:600;font-family:'DM Sans',sans-serif;">CHF 170.–</td>
+        </tr>
+        <tr>
+          <td>Membres passifs adultes</td>
+          <td>CHF 50.–</td>
+          <td style="color:var(--muted)">—</td>
+          <td style="font-weight:600;font-family:'DM Sans',sans-serif;">CHF 50.–</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Notes -->
+    <div class="info-box" style="margin-bottom:14px;">
+      <strong>Juniors</strong> — Depuis 2019, la licence Swiss Badminton est obligatoire pour les juniors. Elle leur permet de participer aux différents tournois (Circuit Juniors, Coupe de l'Avenir, autres tournois) ainsi qu'aux interclubs avec les adultes.
+    </div>
+
+    <div class="info-box" style="margin-bottom:28px;border-left-color:var(--accent);background:var(--accent-pale);">
+      <strong>Membre passif</strong> — En soutenant le club à hauteur de CHF 50.–, le membre passif peut prendre part aux activités annuelles du club : camp du club, tournoi interne, souper annuel, Open Glâne (en NL). Il dispose également d'une voix lors de l'Assemblée générale.
+    </div>
+
+    <!-- Coordonnées bancaires -->
+    <h3 style="font-family:'Source Serif 4',serif;font-size:17px;font-weight:400;color:var(--text);margin:0 0 14px;">Coordonnées bancaires</h3>
+
+    <div class="horaire-block">
+      <div class="horaire-day">Paiement des cotisations</div>
+      <div style="padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:14px;">
+        <div style="display:flex;gap:10px;">
+          <span style="color:var(--muted);min-width:110px;font-size:13px;">Bénéficiaire</span>
+          <span>Badminton Club Glâne, p.a. Bühler Daniel<br>
+          <span style="font-size:13px;color:var(--muted);">Chemin sous l'Hôpital 18, 1681 Billens</span></span>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <span style="color:var(--muted);min-width:110px;font-size:13px;">Compte</span>
+          <span>17-520622-7</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <span style="color:var(--muted);min-width:110px;font-size:13px;">IBAN</span>
+          <span style="font-family:monospace;letter-spacing:0.04em;">CH04 0900 0000 1752 0622 7</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin-top:16px;">Les personnes qui nécessitent un bulletin de versement sont priées d'envoyer un mail à <a href="mailto:daniel.buehler@lasonada.ch" style="color:var(--green)">daniel.buehler@lasonada.ch</a>. Pour toute autre question, <a href="#" onclick="showPage('contact',null)" style="color:var(--green)">contactez-nous</a>.</p>
+  </div>
+
+
+  <!-- JUNIORS -->
+  <div class="page" id="page-juniors">
+    <h2 class="section-title">Section juniors</h2>
+    <div class="info-box">
+      <strong>Bienvenue aux jeunes talents !</strong> Le BC Glâne accueille une quarantaine de jeunes joueurs chaque saison, dès l'âge de 8 ans. Pour inscrire votre enfant, <a href="#" onclick="showPage('contact',null)" style="color:var(--green);font-weight:500;">contactez le club</a>.
+    </div>
+    <p class="section-lead">Pour les questions concernant les juniors, contactez directement la responsable junior par mail : Anaïs Noser - <strong>anaisnoser@gmail.com</strong></p>
+
+    <!-- Entraînements juniors -->
+    <h3 style="font-family:'Source Serif 4',serif;font-size:17px;font-weight:400;color:var(--text);margin:28px 0 12px;">Entraînements</h3>
+
+    <div class="horaire-block">
+      <div class="horaire-day">Mercredi — Bicubic, Romont</div>
+      <div class="horaire-row">
+        <div class="horaire-time">18h00 – 19h30</div>
+        <div class="horaire-info">
+          <strong>Entraînement 13–17 ans</strong>
+          <span>Entraîneur : Lucile Rotzetter</span>
+        </div>
+        <span class="badge badge-gold">13–17 ans</span>
+      </div>
+    </div>
+
+    <div class="horaire-block">
+      <div class="horaire-day">Jeudi — Bicubic, Romont</div>
+      <div class="horaire-row">
+        <div class="horaire-time">18h00 – 19h30</div>
+        <div class="horaire-info">
+          <strong>Entraînement 8–12 ans</strong>
+          <span>Entraîneur : Annie Python, Anaïs Noser ou Alessia Foret</span>
+        </div>
+        <span class="badge badge-gold">8–12 ans</span>
+      </div>
+    </div>
+    
+
+    <!-- Compétitions juniors -->
+    <h3 style="font-family:'Source Serif 4',serif;font-size:17px;font-weight:400;color:var(--text);margin:36px 0 12px;">Calendrier des compétitions</h3>
+
+    <style>
+      .compet-list { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+      .compet-item {
+        display: flex; align-items: center; gap: 16px;
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 18px;
+      }
+     .compet-date-block {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: var(--green-pale); border-radius: 8px;
+        min-width: 70px; height: 64px; flex-shrink: 0; padding: 0 10px;
+      }
+      .compet-date-day { font-family: 'Source Serif 4', serif; font-size: 22px; font-weight: 300; color: var(--green); line-height: 1; }
+      .compet-date-month { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 2px; }
+      .compet-date-year { font-size: 10px; color: var(--muted); margin-top: 1px; letter-spacing: 0.03em; }
+      .compet-info { flex: 1; }
+      .compet-info strong { font-size: 14px; font-weight: 500; display: block; }
+      .compet-info span { font-size: 13px; color: var(--muted); }
+      .compet-item.past { opacity: 0.5; }
+      .compet-item.past .compet-date-block { background: #f0f0ea; }
+      .compet-item.past .compet-date-day { color: var(--muted); }
+    </style>
+
+    <div class="compet-list">
+
+      <div class="compet-item">
+        <div class="compet-date-block">
+          <div class="compet-date-day">21</div>
+          <div class="compet-date-month">Novembre</div>
+          <div class="compet-date-year">2026</div>
+        </div>
+        <div class="compet-info">
+          <strong>Coupe de l'Avenir — Fribourg</strong>
+          <span>Boulevard de Pérolles 68, Fribourg · Juniors jusqu'à 16 ans</span>
+        </div>
+        <span class="badge badge-gold">Débutants</span>
+      </div>
+      <div class="compet-item">
+        <div class="compet-date-block">
+          <div class="compet-date-day">12</div>
+          <div class="compet-date-month">Décembre</div>
+          <div class="compet-date-year">2026</div>
+        </div>
+        <div class="compet-info">
+          <strong>Coupe de l'Avenir — Fribourg</strong>
+          <span>Boulevard de Pérolles 68, Fribourg · Juniors jusqu'à 16 ans</span>
+        </div>
+        <span class="badge badge-gold">Débutants</span>
+      </div>
+      <div class="compet-item">
+        <div class="compet-date-block">
+          <div class="compet-date-day">16</div>
+          <div class="compet-date-month">Janvier</div>
+          <div class="compet-date-year">2027</div>
+        </div>
+        <div class="compet-info">
+          <strong>Coupe de l'Avenir — Fribourg</strong>
+          <span>Boulevard de Pérolles 68, Fribourg · Juniors jusqu'à 16 ans</span>
+        </div>
+        <span class="badge badge-gold">Débutants</span>
+      </div>
+      <div class="compet-item">
+        <div class="compet-date-block">
+          <div class="compet-date-day">20</div>
+          <div class="compet-date-month">Février</div>
+          <div class="compet-date-year">2027</div>
+        </div>
+        <div class="compet-info">
+          <strong>Coupe de l'Avenir — Fribourg</strong>
+          <span>Boulevard de Pérolles 68, Fribourg · Juniors jusqu'à 16 ans</span>
+        </div>
+        <span class="badge badge-gold">Débutants</span>
+      </div>
+      <div class="compet-item">
+        <div class="compet-date-block">
+          <div class="compet-date-day">20</div>
+          <div class="compet-date-month">Mars</div>
+            <div class="compet-date-year">2027</div>
+        </div>
+        <div class="compet-info">
+          <strong>Coupe de l'Avenir — Fribourg</strong>
+          <span>Boulevard de Pérolles 68, Fribourg · Juniors jusqu'à 16 ans</span>
+        </div>
+        <span class="badge badge-gold">Débutants</span>
+      </div>
+      <div class="compet-item">
+        <div class="compet-date-block">
+          <div class="compet-date-day">XX</div>
+          <div class="compet-date-month">Month</div>
+          <div class="compet-date-year">2026</div>
+        </div>
+        <div class="compet-info">
+          <strong>Circuit junior</strong>
+          <span>Lieu · Jusqu'à 19 ans</span>
+        </div>
+        <span class="badge badge-green">Tous âges</span>
+      </div>
+
+
+
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin-top:16px;">
+      Les dates peuvent être sujettes à modification. Consultez le site de l'AFB pour plus de détail sur <a href="https://badminton-fribourg.ch/juniors/coupe-l-avenir" target="_blank" style="color:var(--green)">la Coupe de l'Avenir</a> et <a href="https://badminton-fribourg.ch/juniors/circuits_juniors" target="_blank" style="color:var(--green)">les Circuits Juniors</a> .
+    </p>
+    <!-- Documents juniors -->
+    <h3 style="font-family:'Source Serif 4',serif;font-size:17px;font-weight:400;color:var(--text);margin:36px 0 12px;">Documents utiles</h3>
+
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:640px;">
+
+      <a href="mouvement-junior-fribourgeois.pdf" target="_blank" class="doc-item">
+        <div class="doc-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+        </div>
+        <div class="doc-info">
+          <strong>Mouvement junior fribourgeois</strong>
+          <span>Présentation du programme fribourgeois </span>
+        </div>
+        <div class="doc-dl">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF
+        </div>
+      </a>
+
+      <a href="circuit-junior-bcg.pdf" target="_blank" class="doc-item">
+        <div class="doc-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+        </div>
+        <div class="doc-info">
+          <strong>Circuits juniors</strong>
+          <span>Présentation de la compétition et informations complémentaires</span>
+        </div>
+        <div class="doc-dl">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF
+        </div>
+      </a>
+
+      <a href="coupe-avenir-bcg.pdf" target="_blank" class="doc-item">
+        <div class="doc-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+        </div>
+        <div class="doc-info">
+          <strong>Coupe de l'Avenir</strong>
+          <span>Présentation de la compétition et informations complémentaires</span>
+        </div>
+        <div class="doc-dl">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF
+        </div>
+      </a>
+
+    </div>
+
+    <style>
+      .doc-item {
+        display: flex; align-items: center; gap: 14px;
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 18px;
+        text-decoration: none; color: var(--text);
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      .doc-item:hover { border-color: var(--green); box-shadow: 0 2px 10px rgba(45,90,39,0.08); }
+      .doc-icon {
+        display: flex; align-items: center; justify-content: center;
+        background: var(--green-pale); border-radius: 8px;
+        width: 42px; height: 42px; flex-shrink: 0; color: var(--green);
+      }
+      .doc-info { flex: 1; }
+      .doc-info strong { font-size: 14px; font-weight: 500; display: block; }
+      .doc-info span { font-size: 13px; color: var(--muted); }
+      .doc-dl {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 11px; font-weight: 500; color: var(--muted);
+        border: 1px solid var(--border); border-radius: 100px;
+        padding: 4px 10px; flex-shrink: 0; white-space: nowrap;
+      }
+      .doc-item:hover .doc-dl { border-color: var(--green); color: var(--green); }
+    </style>
+  </div>
+
+  <!-- PHOTOS / VIDÉOS -->
+  <div class="page" id="page-photos">
+
+    <style>
+      .gallery-nav { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+      .gallery-nav-btn {
+        padding:9px 20px; border-radius:8px; border:1px solid var(--border);
+        background:var(--white); color:var(--text); cursor:pointer;
+        font-family:'DM Sans',sans-serif; font-size:14px; transition:all 0.15s;
+      }
+      .gallery-nav-btn.active, .gallery-nav-btn:hover {
+        background:var(--green); color:#fff; border-color:var(--green);
+      }
+
+      .gallery-sub { display:none; }
+      .gallery-sub.active { display:block; }
+
+      .edition-list { display:flex; flex-direction:column; gap:10px; max-width:560px; }
+      .edition-card {
+        display:flex; align-items:center; justify-content:space-between;
+        background:var(--white); border:1px solid var(--border);
+        border-radius:10px; padding:16px 20px; cursor:pointer;
+        transition:border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+        text-decoration:none; color:var(--text);
+      }
+      .edition-card:hover {
+        border-color:var(--green); box-shadow:0 2px 12px rgba(45,90,39,0.1);
+        transform:translateX(3px);
+      }
+      .edition-card-left { display:flex; align-items:center; gap:14px; }
+      .edition-year {
+        font-family:'Source Serif 4',serif; font-size:22px; font-weight:300; color:var(--green);
+      }
+      .edition-count { font-size:13px; color:var(--muted); }
+      .edition-arrow { color:var(--muted); transition:color 0.15s; }
+      .edition-card:hover .edition-arrow { color:var(--green); }
+
+      /* Galerie photos */
+      .photo-gallery-view { display:none; }
+      .photo-gallery-view.active { display:block; }
+      .gallery-back {
+        display:inline-flex; align-items:center; gap:6px;
+        font-size:13px; color:var(--green); cursor:pointer;
+        margin-bottom:20px; background:none; border:none;
+        font-family:'DM Sans',sans-serif; padding:0;
+      }
+      .gallery-back:hover { text-decoration:underline; }
+      .photo-grid {
+        display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+        gap:10px;
+      }
+      .photo-grid img {
+        width:100%; aspect-ratio:4/3; object-fit:cover;
+        border-radius:8px; cursor:pointer;
+        transition:opacity 0.15s, transform 0.15s;
+      }
+      .photo-grid img:hover { opacity:0.85; transform:scale(1.02); }
+
+      /* Lightbox */
+      .lightbox {
+        display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92);
+        z-index:1000; align-items:center; justify-content:center; flex-direction:column;
+      }
+      .lightbox.open { display:flex; }
+      .lightbox img { max-width:90vw; max-height:85vh; border-radius:8px; object-fit:contain; }
+      .lightbox-close {
+        position:absolute; top:20px; right:24px; color:#fff; font-size:28px;
+        cursor:pointer; background:none; border:none; font-family:'DM Sans',sans-serif;
+        opacity:0.7; transition:opacity 0.15s;
+      }
+      .lightbox-close:hover { opacity:1; }
+      .lightbox-nav {
+        display:flex; gap:16px; margin-top:16px;
+      }
+      .lightbox-nav button {
+        background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+        color:#fff; padding:8px 20px; border-radius:6px; cursor:pointer;
+        font-family:'DM Sans',sans-serif; transition:background 0.15s;
+      }
+      .lightbox-nav button:hover { background:rgba(255,255,255,0.2); }
+      .lightbox-counter { color:rgba(255,255,255,0.5); font-size:13px; margin-top:8px; }
+    </style>
+
+    <h2 class="section-title">Photos</h2>
+    <p class="section-lead">Retrouvez les photos des événements du BC Glâne.</p>
+
+    <!-- Navigation sous-pages -->
+    <div class="gallery-nav">
+      <button class="gallery-nav-btn active" onclick="switchGallery('openglane', this)">Open Glâne</button>
+      <button class="gallery-nav-btn" onclick="switchGallery('interclubs', this)">Journée interclubs</button>
+      <button class="gallery-nav-btn" onclick="switchGallery('tournois', this)">Tournois internes</button>
+    </div>
+
+    <!-- OPEN GLÂNE -->
+    <div class="gallery-sub active" id="gsub-openglane">
+      <div class="edition-list" id="elist-openglane">
+        <div class="edition-card" onclick="openEdition('openglane', '2026', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2026</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('openglane', '2025', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2025</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('openglane', '2024', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2024</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('openglane', '2023', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2023</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('openglane', '2022', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2022</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+      <div class="photo-gallery-view" id="gview-openglane">
+        <button class="gallery-back" onclick="closeEdition('openglane')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+        <h3 id="gtitle-openglane" style="font-family:'Source Serif 4',serif;font-size:20px;font-weight:300;margin-bottom:16px;"></h3>
+        <div class="photo-grid" id="pgrid-openglane"></div>
+      </div>
+    </div>
+
+    <!-- JOURNÉE INTERCLUBS -->
+    <div class="gallery-sub" id="gsub-interclubs">
+      <div class="edition-list" id="elist-interclubs">
+        <div class="edition-card" onclick="openEdition('interclubs', '2025', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2025</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('interclubs', '2024', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2024</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+      <div class="photo-gallery-view" id="gview-interclubs">
+        <button class="gallery-back" onclick="closeEdition('interclubs')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+        <h3 id="gtitle-interclubs" style="font-family:'Source Serif 4',serif;font-size:20px;font-weight:300;margin-bottom:16px;"></h3>
+        <div class="photo-grid" id="pgrid-interclubs"></div>
+      </div>
+    </div>
+
+    <!-- TOURNOIS INTERNES -->
+    <div class="gallery-sub" id="gsub-tournois">
+      <div class="edition-list" id="elist-tournois">
+        <div class="edition-card" onclick="openEdition('tournois', '2025', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2025</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('tournois', '2024', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2024</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('tournois', '2023', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2023</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="edition-card" onclick="openEdition('tournois', '2022', this)">
+          <div class="edition-card-left">
+            <div class="edition-year">2022</div>
+            <div class="edition-count">Ajouter les photos</div>
+          </div>
+          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+      <div class="photo-gallery-view" id="gview-tournois">
+        <button class="gallery-back" onclick="closeEdition('tournois')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+        <h3 id="gtitle-tournois" style="font-family:'Source Serif 4',serif;font-size:20px;font-weight:300;margin-bottom:16px;"></h3>
+        <div class="photo-grid" id="pgrid-tournois"></div>
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+      <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+      <img id="lightbox-img" src="" alt="">
+      <div class="lightbox-nav">
+        <button onclick="lightboxNav(-1)">← Précédent</button>
+        <button onclick="lightboxNav(1)">Suivant →</button>
+      </div>
+      <div class="lightbox-counter" id="lightbox-counter"></div>
+    </div>
+
+    <script>
+      // ─── DONNÉES PHOTOS ───────────────────────────────────────────────
+      // Remplacez les URLs par vos vraies URLs Cloudinary
+      // Format: 'categorie': { 'année': ['url1', 'url2', ...] }
+      const CLOUD_NAME = 'di7xergzn'; // à remplacer
+
+      async function loadPhotos(cat, year) {
+        const folder = cat + '/' + year;
+        const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${folder}.json`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          return data.resources.map(r =>
+            `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`
+          );
+        } catch {
+          return [];
+        }
+      }
+
+      async function openEdition(cat, year, card) {
+        const grid = document.getElementById('pgrid-' + cat);
+        const title = document.getElementById('gtitle-' + cat);
+
+        title.textContent = categoryLabels[cat] + ' ' + year;
+        grid.innerHTML = '<p style="color:var(--muted);font-size:14px;">Chargement…</p>';
+
+        document.getElementById('elist-' + cat).style.display = 'none';
+        document.getElementById('gview-' + cat).classList.add('active');
+
+        const photos = await loadPhotos(cat, year);
+        grid.innerHTML = '';
+
+        if (photos.length === 0) {
+          grid.innerHTML = '<p style="color:var(--muted);font-size:14px;grid-column:1/-1;">Aucune photo disponible pour cette édition.</p>';
+        } else {
+          photos.forEach((url, i) => {
+            const img = document.createElement('img');
+            img.src = url.replace('/upload/', '/upload/w_400,q_auto,f_auto/'); // miniatures optimisées
+            img.alt = categoryLabels[cat] + ' ' + year + ' — photo ' + (i+1);
+            img.loading = 'lazy';
+            img.onclick = () => openLightbox(photos, i);
+            grid.appendChild(img);
+          });
+        }
+      }
+
+      const categoryLabels = {
+        openglane: "Open Glâne",
+        interclubs: "Journée interclubs",
+        tournois: "Tournoi interne"
+      };
+
+      let currentPhotos = [];
+      let currentIndex = 0;
+
+      function switchGallery(id, btn) {
+        document.querySelectorAll('.gallery-sub').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.gallery-nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('gsub-' + id).classList.add('active');
+        btn.classList.add('active');
+      }
+
+      
+      function closeEdition(cat) {
+        document.getElementById('elist-' + cat).style.display = 'flex';
+        document.getElementById('gview-' + cat).classList.remove('active');
+      }
+
+      function openLightbox(photos, index) {
+        currentPhotos = photos;
+        currentIndex = index;
+        document.getElementById('lightbox-img').src = photos[index];
+        document.getElementById('lightbox-counter').textContent = (index+1) + ' / ' + photos.length;
+        document.getElementById('lightbox').classList.add('open');
+      }
+
+      function closeLightbox(e) {
+        if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+          document.getElementById('lightbox').classList.remove('open');
+        }
+      }
+
+      function lightboxNav(dir) {
+        currentIndex = (currentIndex + dir + currentPhotos.length) % currentPhotos.length;
+        document.getElementById('lightbox-img').src = currentPhotos[currentIndex];
+        document.getElementById('lightbox-counter').textContent = (currentIndex+1) + ' / ' + currentPhotos.length;
+      }
+
+      document.addEventListener('keydown', e => {
+        if (!document.getElementById('lightbox').classList.contains('open')) return;
+        if (e.key === 'ArrowRight') lightboxNav(1);
+        if (e.key === 'ArrowLeft') lightboxNav(-1);
+        if (e.key === 'Escape') closeLightbox({target: document.getElementById('lightbox')});
+      });
+    </script>
+
+  </div>
+  <!-- OPEN GLÂNE -->
+  <div class="page" id="page-openglane">
+
+    <style>
+      .og-hero {
+        background: var(--green); border-radius: 12px; padding: 36px 40px;
+        margin-bottom: 28px; position: relative; overflow: hidden;
+        display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      }
+      .og-hero::before {
+        content: ''; position: absolute; top: -50px; right: -50px;
+        width: 220px; height: 220px; border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+      }
+      .og-hero-text h2 {
+        font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 300;
+        color: #fff; line-height: 1.2; margin-bottom: 6px;
+      }
+      .og-hero-text p { color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.6; }
+      .og-edition-badge {
+        background: var(--accent); color: #2a1f00; font-size: 12px; font-weight: 600;
+        padding: 4px 14px; border-radius: 100px; display: inline-block; margin-bottom: 10px;
+        letter-spacing: 0.03em;
+      }
+      .og-flyer-placeholder {
+        flex-shrink: 0; width: 110px; height: 155px; background: rgba(255,255,255,0.08);
+        border-radius: 8px; border: 2px dashed rgba(255,255,255,0.25);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 6px; cursor: pointer; transition: background 0.15s;
+      }
+      .og-flyer-placeholder:hover { background: rgba(255,255,255,0.13); }
+      .og-flyer-placeholder svg { opacity: 0.5; }
+      .og-flyer-placeholder span { font-size: 11px; color: rgba(255,255,255,0.45); text-align: center; line-height: 1.4; }
+      .og-flyer-placeholder img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; display: none; }
+
+      .og-info-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr));
+        gap: 12px; margin-bottom: 28px;
+      }
+      .og-info-card {
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: 10px; padding: 16px 18px;
+      }
+      .og-info-card .og-ic-label {
+        font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+        color: var(--muted); margin-bottom: 5px;
+      }
+      .og-info-card .og-ic-value {
+        font-family: 'Source Serif 4', serif; font-size: 18px; font-weight: 300; color: var(--green);
+      }
+      .og-info-card .og-ic-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+      .og-section-title {
+        font-family: 'Source Serif 4', serif; font-size: 17px; font-weight: 400;
+        color: var(--text); margin: 32px 0 12px;
+      }
+
+      .og-sponsors-grid {
+        display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;
+      }
+      .og-sponsor-slot {
+        width: 130px; height: 70px; background: var(--white);
+        border: 2px dashed var(--border); border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12px; color: var(--muted); cursor: pointer;
+        transition: border-color 0.15s;
+      }
+      .og-sponsor-slot:hover { border-color: var(--green); color: var(--green); }
+
+      .og-gallery-link {
+        display: flex; align-items: center; gap: 14px;
+        background: var(--white); border: 1px solid var(--border);
+        border-radius: 10px; padding: 14px 18px; text-decoration: none;
+        color: var(--text); transition: border-color 0.15s, box-shadow 0.15s;
+        max-width: 400px;
+      }
+      .og-gallery-link:hover { border-color: var(--green); box-shadow: 0 2px 10px rgba(45,90,39,0.08); }
+      .og-gallery-icon {
+        width: 42px; height: 42px; background: var(--green-pale); border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--green); flex-shrink: 0;
+      }
+      .og-gallery-info strong { font-size: 14px; font-weight: 500; display: block; }
+      .og-gallery-info span { font-size: 13px; color: var(--muted); }
+    </style>
+
+    <!-- Bande verte -->
+    <div class="og-hero">
+      <div class="og-hero-text">
+        <div class="og-edition-badge">Prochaine édition</div>
+        <h2>Open Glâne 2026</h2>
+        <p>Le tournoi annuel du BC Glâne.<br>Ouvert à tous les niveaux, toutes catégories.</p>
+        <a href="#" target="_blank"
+          style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:var(--accent);color:#2a1f00;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;transition:opacity 0.15s;"
+          onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          S'inscrire sur SwissBadminton
+        </a>
+      </div>
+      <div style="display:flex;flex-direction:row;gap:10px;flex-shrink:0;">
+        <!-- Flyer -->
+        <a href="flyer_OpenGlane26.pdf" target="_blank" style="position:relative;z-index:10;">
+          <img src="flyer_OpenGlane26.jpg" style="width:150px;height:210px;object-fit:cover;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.25);display:block;">
+        </a>
+        <!-- Annonce -->
+        <a href="annonce_OpenGlane26.pdf" target="_blank" style="position:relative;z-index:10;">
+          <img src="annonce_OpenGlane26.jpg" style="width:150px;height:210px;object-fit:cover;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.25);display:block;">
+        </a>
+      </div>
+    </div>
+
+    <!-- Infos pratiques -->
+    <div class="og-info-grid">
+      <div class="og-info-card">
+        <div class="og-ic-label">Date</div>
+        <div class="og-ic-value">XX – XX</div>
+        <div class="og-ic-sub">Février 2027</div>
+      </div>
+      <div class="og-info-card">
+        <div class="og-ic-label">Lieu</div>
+        <div class="og-ic-value">Bicubic</div>
+        <div class="og-ic-sub">Romont, Fribourg</div>
+      </div>
+      <div class="og-info-card">
+        <div class="og-ic-label">Format</div>
+        <div class="og-ic-value">Full KO ou poules</div>
+        <div class="og-ic-sub">Simple, double, mixte</div>
+      </div>
+      <div class="og-info-card">
+        <div class="og-ic-label">Niveaux</div>
+        <div class="og-ic-value">Tous</div>
+        <div class="og-ic-sub">Top, A, B, C, D, NL et populaire</div>
+      </div>
+      <div class="og-info-card">
+        <div class="og-ic-label">Terrains</div>
+        <div class="og-ic-value">18 courts</div>
+       </div>
+    </div>
+
+    <!-- Galerie -->
+    <div class="og-section-title">Éditions précédentes</div>
+    <a href="#" onclick="showPage('photos', null)" class="og-gallery-link">
+      <div class="og-gallery-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div class="og-gallery-info">
+        <strong>Photos des Open Glâne</strong>
+        <span>Dernières éditions — voir la galerie</span>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+
+
+    <!-- Sponsors -->
+    <div class="og-section-title">Sponsors</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Merci à nos partenaires pour leur soutien au tournoi.</p>
+
+    <style>
+      .sponsor-tier { margin-bottom: 24px; }
+      .sponsor-tier-label {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 11px; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.08em; margin-bottom: 10px;
+      }
+      .sponsor-tier-label::after {
+        content: ''; flex: 1; height: 1px; background: var(--border);
+      }
+      .tier-platine .sponsor-tier-label { color: #7a8a9a; }
+      .tier-or .sponsor-tier-label { color: #7a5c0a; }
+      .tier-argent .sponsor-tier-label { color: #6b6b6b; }
+      .sponsor-slots { display: flex; flex-wrap: wrap; gap: 12px; }
+      .og-sponsor-slot {
+        display: flex; align-items: center; justify-content: center;
+        background: var(--white); border: 2px dashed var(--border);
+        border-radius: 8px; font-size: 12px; color: var(--muted);
+        cursor: pointer; transition: border-color 0.15s, color 0.15s;
+        text-align: center;
+      }
+      .og-sponsor-slot:hover { border-color: var(--green); color: var(--green); }
+      .tier-platine .og-sponsor-slot { width: 160px; height: 80px; }
+      .tier-or .og-sponsor-slot { width: 130px; height: 65px; }
+      .tier-argent .og-sponsor-slot { width: 105px; height: 52px; }
+      .tier-platine .og-sponsor-slot { border-color: #b0c0cc; }
+      .tier-or .og-sponsor-slot { border-color: #d4b96a; }
+      .tier-argent .og-sponsor-slot { border-color: #c0c0c0; }
+    </style>
+
+    <div class="sponsor-tier tier-platine">
+      <div class="sponsor-tier-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#7a8a9a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Platine
+      </div>
+      <div class="sponsor-slots">
+        <div class="og-sponsor-slot">Logo sponsor</div>
+        <div class="og-sponsor-slot">Logo sponsor</div>
+      </div>
+    </div>
+
+    <div class="sponsor-tier tier-or">
+      <div class="sponsor-tier-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#7a5c0a"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Or
+      </div>
+      <div class="sponsor-slots">
+        <div class="og-sponsor-slot">Logo sponsor</div>
+        <div class="og-sponsor-slot">Logo sponsor</div>
+        <div class="og-sponsor-slot">Logo sponsor</div>
+      </div>
+    </div>
+
+    <div class="sponsor-tier tier-argent">
+      <div class="sponsor-tier-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#6b6b6b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Argent
+      </div>
+      <div class="sponsor-slots">
+        <div class="og-sponsor-slot">Logo sponsor</div>
+        <div class="og-sponsor-slot">Logo sponsor</div>
+        <div class="og-sponsor-slot">Logo sponsor</div>
+        <div class="og-sponsor-slot">Logo sponsor</div>
+      </div>
+    </div>
+
+
+
+        <!-- Contact -->
+        <div class="og-section-title">Contact & organisation</div>
+        <div class="info-box">
+          Pour toute question sur le tournoi (inscription, logistique, partenariat), contactez le responsable événements :
+          <strong>Nicolas Etter</strong> — par mail: open.glane@hotmail.com ou par téléphone au XXXXXXXX
+        </div>
+
+      </div>
+
+  <!-- CONTACT -->
+  <div class="page" id="page-contact">
+    <h2 class="section-title">Contact</h2>
+    <p class="section-lead">Pour toute demande d'information ou pour devenir membre, remplissez le formulaire ci-dessous. Le président Jean-Yves Salomone vous répondra dans les meilleurs délais.</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Prénom</label><input type="text" placeholder="Jean" /></div>
+      <div class="form-group"><label>Nom</label><input type="text" placeholder="Dupont" /></div>
+      <div class="form-group full"><label>Email</label><input type="email" placeholder="jean.dupont@email.com" /></div>
+      <div class="form-group full"><label>Sujet</label>
+        <select>
+          <option>Demande d'information générale</option>
+          <option>Je souhaite devenir membre</option>
+          <option>Section juniors</option>
+          <option>Interclubs / compétition</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group full"><label>Message</label><textarea rows="5" placeholder="Votre message..."></textarea></div>
+    </div>
+    <button class="btn-primary" style="margin-top:16px" onclick="sendMail()">Envoyer le message</button>
+    <p id="mail-status" style="margin-top:12px;font-size:13px;display:none;"></p>
+
+    <div style="margin-top:40px;display:flex;gap:14px;flex-wrap:wrap;">
+      <div class="card" style="flex:1;min-width:180px;">
+        <div class="card-label">Lieu d'entraînement</div>
+        <div style="font-size:15px;font-weight:500;margin-top:4px">Le Bicubic</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px">Route de la Glâne, Romont FR</div>
+      </div>
+      <div class="card" style="flex:1;min-width:180px;">
+        <div class="card-label">Affiliation</div>
+        <div style="font-size:15px;font-weight:500;margin-top:4px">Swiss Badminton</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px">Association Fribourgeoise de Badminton</div>
+      </div>
+    </div>
+  </div>
+  <!-- PROTECTION DES DONNÉES -->
+  <div class="page" id="page-privacy">
+    <h2 class="section-title">Protection des données</h2>
+    <p class="section-lead">Conformément à la loi fédérale suisse sur la protection des données (nLPD), en vigueur depuis le 1er septembre 2023.</p>
+
+    <div class="prose">
+
+      <h2>Responsable du traitement</h2>
+      <p>
+        Badminton Club Glâne<br>
+        Romont, Canton de Fribourg, Suisse<br>
+        Contact : <a href="#" onclick="showPage('contact',null)" style="color:var(--green)">via le formulaire de contact</a> ou à l'adresse <a href="mailto:maximus.corbettes@gmail.com" style="color:var(--green)">maximus.corbettes@gmail.com</a>
+      </p>
+
+      <h2>Données collectées</h2>
+      <p>
+        Le site du BC Glâne collecte uniquement les données que vous fournissez volontairement via le formulaire de contact : prénom, nom, adresse email et le contenu de votre message. Aucune donnée n'est collectée automatiquement (pas de cookies, pas de traceurs, pas d'analytics).
+      </p>
+
+      <h2>Finalité du traitement</h2>
+      <p>
+        Les données transmises via le formulaire sont utilisées exclusivement pour répondre à votre demande et, si vous le souhaitez, pour la gestion de votre adhésion au club. Elles ne sont pas utilisées à des fins commerciales ou publicitaires.
+      </p>
+
+      <h2>Transmission à des tiers</h2>
+      <p>
+        Vos données ne sont transmises à aucun tiers, à l'exception du service d'envoi d'email EmailJS (emailjs.com), utilisé uniquement pour l'acheminement technique de votre message. Elles ne sont en aucun cas vendues ou partagées à des fins commerciales.
+      </p>
+
+      <h2>Durée de conservation</h2>
+      <p>
+        Les messages reçus sont conservés uniquement le temps nécessaire au traitement de votre demande, puis supprimés. Les données des membres actifs sont conservées pour la durée de l'adhésion.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        Conformément à la nLPD, vous disposez des droits suivants concernant vos données personnelles :
+      </p>
+      <ul style="margin:0 0 16px 20px; line-height:2; font-size:15px; color:var(--text);">
+        <li>Droit d'accès à vos données</li>
+        <li>Droit de rectification en cas d'inexactitude</li>
+        <li>Droit à l'effacement de vos données</li>
+        <li>Droit de vous opposer à leur traitement</li>
+      </ul>
+      <p>
+        Pour exercer l'un de ces droits, contactez-nous via le <a href="#" onclick="showPage('contact',null)" style="color:var(--green)">formulaire de contact</a> ou directement à l'adresse <a href="mailto:maximus.corbettes@gmail.com" style="color:var(--green)">maximus.corbettes@gmail.com</a>. Nous nous engageons à répondre dans un délai de 30 jours.
+      </p>
+
+      <h2>Modifications</h2>
+      <p>
+        Cette page peut être mise à jour à tout moment. La version en ligne fait foi. Dernière mise à jour : avril 2025.
+      </p>
+
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <span>© 2025 BC Glâne — Badminton Club Glâne, Romont FR</span>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a href="https://www.instagram.com/bcglane" target="_blank" aria-label="Instagram du BC Glâne"
+        style="color:var(--muted); transition:color 0.15s; display:flex;"
+        onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='var(--muted)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <a href="#" onclick="showPage('privacy', null)" style="color:var(--muted);text-decoration:none;font-size:11px;">Protection des données</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+emailjs.init('FNYk1LI9iMvS7CF3u');
+
+function sendMail() {
+  const btn = document.querySelector('#page-contact .btn-primary');
+  const status = document.getElementById('mail-status');
+
+  const prenom = document.querySelectorAll('#page-contact input[type=text]')[0].value.trim();
+  const nom    = document.querySelectorAll('#page-contact input[type=text]')[1].value.trim();
+  const email  = document.querySelector('#page-contact input[type=email]').value.trim();
+  const sujet  = document.querySelector('#page-contact select').value;
+  const msg    = document.querySelector('#page-contact textarea').value.trim();
+
+  if (!prenom || !nom || !email || !msg) {
+    status.style.display = 'block';
+    status.style.color = '#c0392b';
+    status.textContent = 'Veuillez remplir tous les champs obligatoires.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+  status.style.display = 'none';
+
+  emailjs.send('service_maxbcg', 'template_j7d8o0i', {
+    from_name:  prenom + ' ' + nom,
+    from_email: email,
+    subject:    sujet,
+    message:    msg
+  })
+  .then(() => {
+    btn.textContent = '✓ Message envoyé';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    status.style.display = 'block';
+    status.style.color = 'var(--green)';
+    status.textContent = 'Merci ! Votre message a bien été envoyé, nous vous répondrons rapidement.';
+    document.querySelectorAll('#page-contact input, #page-contact textarea').forEach(el => el.value = '');
+  })
+  .catch((err) => {
+    btn.disabled = false;
+    btn.textContent = 'Envoyer le message';
+    status.style.display = 'block';
+    status.style.color = '#c0392b';
+    status.textContent = "Une erreur s'est produite. Veuillez réessayer ou nous contacter directement par email.";
+    console.error('EmailJS error:', err);
+  });
+}
+const titles = {
+  bienvenue:'Bienvenue', historique:'Historique', comite:'Le comité',
+  actualites:'Actualités', entrainement:'Entraînement', interclubs:'Interclubs',
+  classements:'Saisons précédentes', tarif:'Tarifs', juniors:'Juniors',
+  photos:'Photos / Vidéos', contact:'Contact', privacy:'Protection des données',
+  openglane:'Open Glâne'
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+  if (el) el.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0, 0);
+  sessionStorage.setItem('currentPage', id);
+}
+
+// Restaurer la page au chargement
+(function() {
+  const saved = sessionStorage.getItem('currentPage');
+  if (saved && document.getElementById('page-' + saved)) {
+    showPage(saved, null);
+  } else {
+    showPage('bienvenue', null);
+  }
+})();
+
+function toggleTeam(id, row) {
+  const playersRow = document.getElementById(id);
+  const isOpen = playersRow.classList.contains('open');
+  playersRow.classList.toggle('open', !isOpen);
+  row.classList.toggle('open', !isOpen);
+}
+
+
+function toggleSub(id, el) {
+  const sub = document.getElementById(id);
+  sub.classList.toggle('open');
+}
+</script>
+</body>
+</html>
