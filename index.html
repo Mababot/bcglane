@@ -1123,6 +1123,14 @@ nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
       .edition-count { font-size:13px; color:var(--muted); }
       .edition-arrow { color:var(--muted); transition:color 0.15s; }
       .edition-card:hover .edition-arrow { color:var(--green); }
+      .edition-cover {
+        width:56px; height:42px; border-radius:6px; object-fit:cover;
+        flex-shrink:0; background:var(--green-pale);
+      }
+      .edition-cover-empty {
+        width:56px; height:42px; border-radius:6px; flex-shrink:0;
+        background:var(--green-pale); display:flex; align-items:center; justify-content:center;
+      }
 
       /* Galerie photos */
       .photo-gallery-view { display:none; }
@@ -1182,43 +1190,7 @@ nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
 
     <!-- OPEN GLÂNE -->
     <div class="gallery-sub active" id="gsub-openglane">
-      <div class="edition-list" id="elist-openglane">
-        <div class="edition-card" onclick="openEdition('openglane', '2026', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2026</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('openglane', '2025', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2025</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('openglane', '2024', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2024</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('openglane', '2023', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2023</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('openglane', '2022', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2022</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
+      <div class="edition-list"id="elist-openglane"></div>
       <div class="photo-gallery-view" id="gview-openglane">
         <button class="gallery-back" onclick="closeEdition('openglane')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1231,22 +1203,7 @@ nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
 
     <!-- JOURNÉE INTERCLUBS -->
     <div class="gallery-sub" id="gsub-interclubs">
-      <div class="edition-list" id="elist-interclubs">
-        <div class="edition-card" onclick="openEdition('interclubs', '2025', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2025</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('interclubs', '2024', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2024</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
+      <div class="edition-list"id="elist-interclubs"></div>
       <div class="photo-gallery-view" id="gview-interclubs">
         <button class="gallery-back" onclick="closeEdition('interclubs')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1259,36 +1216,7 @@ nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
 
     <!-- TOURNOIS INTERNES -->
     <div class="gallery-sub" id="gsub-tournois">
-      <div class="edition-list" id="elist-tournois">
-        <div class="edition-card" onclick="openEdition('tournois', '2025', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2025</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('tournois', '2024', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2024</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('tournois', '2023', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2023</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="edition-card" onclick="openEdition('tournois', '2022', this)">
-          <div class="edition-card-left">
-            <div class="edition-year">2022</div>
-            <div class="edition-count">Ajouter les photos</div>
-          </div>
-          <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
+      <div class="edition-list"id="elist-tournois"></div>
       <div class="photo-gallery-view" id="gview-tournois">
         <button class="gallery-back" onclick="closeEdition('tournois')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1311,47 +1239,68 @@ nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
     </div>
 
     <script>
-      // ─── DONNÉES PHOTOS ───────────────────────────────────────────────
-      // Remplacez les URLs par vos vraies URLs Cloudinary
-      // Format: 'categorie': { 'année': ['url1', 'url2', ...] }
-      const CLOUD_NAME = 'di7xergzn'; // à remplacer
-
-      async function loadPhotos(cat, year) {
-        const folder = cat + '/' + year;
-        const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${folder}.json`;
-        try {
-          const res = await fetch(url);
-          const data = await res.json();
-          return data.resources.map(r =>
-            `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${r.public_id}.jpg`
-          );
-        } catch {
-          return [];
+      // Photos générées par generate_gallery.py — ne pas modifier manuellement
+      const CLOUDINARY_PHOTOS = {
+        "openglane": {
+          "2026": [
+            {
+              "thumb": "https://res.cloudinary.com/di7xergzn/image/upload/w_600,q_auto,f_auto/openglane/2026/image1002324.jpg",
+              "full": "https://res.cloudinary.com/di7xergzn/image/upload/q_auto/openglane/2026/image1002324.jpg"
+            },
+            {
+              "thumb": "https://res.cloudinary.com/di7xergzn/image/upload/w_600,q_auto,f_auto/openglane/2026/image1002327.jpg",
+              "full": "https://res.cloudinary.com/di7xergzn/image/upload/q_auto/openglane/2026/image1002327.jpg"
+            }
+          ],
+          "2025": [
+            {
+              "thumb": "https://res.cloudinary.com/di7xergzn/image/upload/w_600,q_auto,f_auto/openglane/2025/image1001953.jpg",
+              "full": "https://res.cloudinary.com/di7xergzn/image/upload/q_auto/openglane/2025/image1001953.jpg"
+            }
+          ],
+          "2024": [],
+          "2023": [],
+          "2022": []
+        },
+        "interclubs": {
+          "2025": []
+        },
+        "tournois": {
+          "2026": [],
+          "2025": [],
+          "2024": [],
+          "2023": [],
+          "2022": [],
+          "2021": [],
+          "2019": [],
+          "2018": [],
+          "2017": [],
+          "2016": [],
+          "2015": []
         }
-      }
+      };
 
-      async function openEdition(cat, year, card) {
+      function openEdition(cat, year, card) {
         const grid = document.getElementById('pgrid-' + cat);
         const title = document.getElementById('gtitle-' + cat);
 
         title.textContent = categoryLabels[cat] + ' ' + year;
-        grid.innerHTML = '<p style="color:var(--muted);font-size:14px;">Chargement…</p>';
-
         document.getElementById('elist-' + cat).style.display = 'none';
         document.getElementById('gview-' + cat).classList.add('active');
 
-        const photos = await loadPhotos(cat, year);
+        const photos = (CLOUDINARY_PHOTOS[cat] || {})[year] || [];
         grid.innerHTML = '';
 
         if (photos.length === 0) {
           grid.innerHTML = '<p style="color:var(--muted);font-size:14px;grid-column:1/-1;">Aucune photo disponible pour cette édition.</p>';
         } else {
-          photos.forEach((url, i) => {
+          const fullUrls = photos.map(p => p.full);
+          photos.forEach((p, i) => {
             const img = document.createElement('img');
-            img.src = url.replace('/upload/', '/upload/w_400,q_auto,f_auto/'); // miniatures optimisées
+            img.src = p.thumb;
             img.alt = categoryLabels[cat] + ' ' + year + ' — photo ' + (i+1);
             img.loading = 'lazy';
-            img.onclick = () => openLightbox(photos, i);
+            img.onclick = () => openLightbox(fullUrls, i);
             grid.appendChild(img);
           });
         }
@@ -1362,6 +1311,45 @@ nav .nav-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
         interclubs: "Journée interclubs",
         tournois: "Tournoi interne"
       };
+
+      const CATEGORY_YEARS = {
+        openglane:  ["2026", "2025", "2024", "2023", "2022"],
+        interclubs: ["2025"],
+        tournois:   ["2026", "2025", "2024", "2023", "2022", "2021", "2019", "2018", "2017", "2016", "2015"]
+      };
+
+      function buildEditionLists() {
+        Object.keys(CATEGORY_YEARS).forEach(cat => {
+          const list = document.getElementById('elist-' + cat);
+          if (!list) return;
+          list.innerHTML = '';
+          CATEGORY_YEARS[cat].forEach(year => {
+            const photos = (CLOUDINARY_PHOTOS[cat] || {})[year] || [];
+            const count = photos.length;
+            const coverHtml = count > 0
+              ? `<img class="edition-cover" src="${photos[0].thumb}" alt="Couverture ${year}" loading="lazy">`
+              : `<div class="edition-cover-empty"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--border)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+            const subtitle = count > 0
+              ? `${count} photo${count > 1 ? 's' : ''}`
+              : 'Bientôt disponible';
+            const card = document.createElement('div');
+            card.className = 'edition-card';
+            card.onclick = () => openEdition(cat, year, card);
+            card.innerHTML = `
+              <div class="edition-card-left">
+                ${coverHtml}
+                <div>
+                  <div class="edition-year">${year}</div>
+                  <div class="edition-count">${subtitle}</div>
+                </div>
+              </div>
+              <svg class="edition-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+            list.appendChild(card);
+          });
+        });
+      }
+
+      buildEditionLists();
 
       let currentPhotos = [];
       let currentIndex = 0;
